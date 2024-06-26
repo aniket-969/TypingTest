@@ -14,12 +14,15 @@ import CustomUserInput from '../components/CustomUserInput';
 import { useUtilitiesContext } from '../context/UtilitiesProvider';
 import About from '../components/About';
 import { VscDebugRestart } from "react-icons/vsc";
+import KeyboardTrigger from '../components/MobileKeyboard';
+import MobileKeyboardTrigger from '../components/MobileKeyboard';
 
 const Home = () => {
   const { typingTexts, typed, timeLeft, errors, restart, totalTyped, state, typingSpeed, time } = useEngine();
   const { visibility, setTypingProfile, setCaretPosition } = useTypingContext();
   const { fontSize, resetButton, caret } = useUtilitiesContext()
   const scrollRef = useRef(null);
+  const inputRef = useRef(null);
   const [showOptions, setShowOptions] = useState(false)
 
   useEffect(() => {
@@ -31,6 +34,12 @@ const Home = () => {
   useEffect(() => {
     restart()
   }, [visibility])
+
+  const handleContainerClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   return (
 
@@ -46,11 +55,14 @@ const Home = () => {
 
           <OptionSelector showOptions={showOptions} setShowOptions={setShowOptions} restart={restart} />
           <CountedownTimer setShowOptions={setShowOptions} showOptions={showOptions} timeLeft={timeLeft} />
+
           <div ref={scrollRef} className={`relative [word-spacing:6px]  w-[100%] overflow-hidden flex items-center justify-center max-w-[1280px] mt-5 ${showOptions ? "hidden" : "visible"}  `}
             style={{ fontSize: fontSize.size, lineHeight: fontSize.lineheight, height: fontSize.height }}>
             <Typing userInput={typed} words={typingTexts} scrollRef={scrollRef} showOptions={showOptions} restart={restart} scroll={fontSize.scroll} />
           </div>
+          <MobileKeyboardTrigger />
           <VscDebugRestart className='text-[1.2rem] restart' onClick={() => restart()} />
+
           <Results
             state={state}
             errors={errors}
